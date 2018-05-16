@@ -22,7 +22,7 @@ def get_cookie():
             print('Invalid cookie or the cookie has expired.')
             raise IncorrectCookieError
     except requests.exceptions.ConnectionError:
-        print('Check internet connection!!!')
+        print('Check internet connection.')
         sys.exit()
     except:
         uid = userinput()
@@ -46,7 +46,7 @@ def get_cookie():
             tfacode = raw_input('Enter the number you received for two factors authentication. >>> ')
             response = requests.post('https://login.eagleeyenetworks.com/g/aaa/authorize', {'token':token, 'two_factor_authentication_code': tfacode})
         print('Login success.')
-        pprint.pprint('auth_key = ' + response.cookies['auth_key'])
+        #pprint.pprint('auth_key = ' + response.cookies['auth_key'])
         try:
             with open(cookie_file, 'w') as f:
                 pickle.dump(requests.utils.dict_from_cookiejar(response.cookies), f)
