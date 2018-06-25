@@ -1,0 +1,20 @@
+Invalid cookie or the cookie has expired
+Check internet connection!!!
+Login failure.
+Enter the number you received for two factors authentication. >>> 
+Login success.
+Cannot save the cookie...
+E-mail adress >>> 
+Password >>> 
+Logout succeed.
+Error. Logout failure.
+1 to send two factor authentication code to E-mail,
+2 to send the code to SMS.
+I'll send a number to your E-mail address.
+I'll send a number to your SMS.
+Quited two factor authentication.
+Exited.
+Success to send the code.
+Failed to send the code.
+TFA login success.
+TFA login failure.
