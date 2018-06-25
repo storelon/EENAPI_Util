@@ -10,7 +10,6 @@ from een_localize import language
 def apitool_main():
     authentica = auth.Auth() #Create a instance of authentication class.
     cookie = authentica.get_cookie() #Get a cookie.
-    print cookie
     lang = language.Language('main') #Create a instance of language localization class.
 
     def printer(string): #printer method
