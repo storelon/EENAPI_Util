@@ -39,30 +39,22 @@ def fileout(givenlist, filename):
         #File output error!!!
     except:
         print(lang.getStrings(2).replace('\n',''))
+
         #Unknown error!!!
 
-def makecsv(devicelist):
+def makecsv(listing, filename): # will be for generic use (3 param for filename,header,list)
     '''
     Create a CSV file from given device list.
     :param json devicelist: Raw JSON of device list.
     '''
     lang = language.Language('een_filer/export')
-    string = [u'type,name,ESN,IP\r\n']
 
-    def nonid(camid): #If the camera ID is None, replace inside of camid to a empty string.
-        if camid == None:
-            camid = u''
-        return camid
-
-    #Appending lines to the list with loops.
-    [string.append(i[3] + u',' + i[2] + u',' + nonid(i[1]) + u',' +
-                   i[14].replace(',',';') + u'\r\n') for i in devicelist.json()]
     dirname = 'output'
     dirname = od.createdir(dirname) #Prepare for failure of making directory
 
     try: #Trying to write a file.
-        with codecs.open(dirname + '/' + 'devicelist.csv', 'w', 'utf_8') as f:
-            f.writelines(string)
+        with codecs.open(dirname + '/' + filename + '.csv', 'w', 'utf_8') as f:
+            f.writelines(listing)
         print(lang.getStrings(0).replace('\n',''))
         #File outputed.
     except IOError:
@@ -70,4 +62,6 @@ def makecsv(devicelist):
         #File output error!!!
     except:
         print(lang.getStrings(2).replace('\n',''))
+        import traceback
+        traceback.print_exc()
         #Unknown error!!!

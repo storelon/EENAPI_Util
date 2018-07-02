@@ -44,8 +44,5 @@ def apitool_main():
             #Exiting.
             break
 
-
 if __name__ == '__main__': #main method
     apitool_main()
-
-#tst

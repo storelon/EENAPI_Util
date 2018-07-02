@@ -8,14 +8,12 @@ from een_filer import operate_dir as od
 from een_filer import export as xd
 from een_localize import language
 
-gcookie = '' #recycle cookie
-
-def get_accountlist():
+def get_accountlist(cookie):
     '''
     Get subaccount list method.
     :return json: response of subaccount list
     '''
-    response = requests.get('https://login.eagleeyenetworks.com/g/account/list', cookies=gcookie)
+    response = requests.get('https://login.eagleeyenetworks.com/g/account/list', cookies=cookie)
     print(response)
     return(response)
 
@@ -25,9 +23,7 @@ def accountlist(cookie):
     :param string cookie: Current session's cookie.
     '''
     lang = language.Language('een_account/get_account')
-    global gcookie
-    gcookie = cookie
-    accounts = get_accountlist()
+    accounts = get_accountlist(cookie)
     if accounts.status_code == 200:
         def printer(string):
             print(string)
@@ -40,8 +36,6 @@ def dl_accountlist(cookie):
     Download and write sub account list method.
     :param string cookie: Current session's cookie.
     '''
-    global gcookie
-    gcookie = cookie
-    accounts = get_accountlist()
+    accounts = get_accountlist(cookie)
     xd.fileout(accounts, 'subaccountlist')
     

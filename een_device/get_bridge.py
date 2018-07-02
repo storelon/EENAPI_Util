@@ -3,6 +3,8 @@ import sys, os
 import json
 import codecs
 
+import get_metric as gm
+
 sys.path.append(os.getcwd())
 
 from een_filer import operate_dir as od
@@ -83,7 +85,7 @@ def show_bridges():
         print(string)
     
     [printer(i[2] + u' (ID: ' + i[1] + u' ) : version ' +
-             get_bridge(i[1]).json()['camera_info']['camera_property_version']) for i in make_bridgelist().json()] #[8][8]
+             get_bridge(i[1]).json()['camera_info']['camera_property_version'] ) for i in make_bridgelist().json()] #[8][8]
 
 def menu_bridgeinfo(cookie):
     '''
@@ -98,6 +100,10 @@ def menu_bridgeinfo(cookie):
         #1 to show bridge list
         print(lang.getStrings(6).replace('\n',''))
         #2 to download bridge's information
+        print(lang.getStrings(8).replace('\n',''))
+        #3 to display bridge metrics
+        print(lang.getStrings(9).replace('\n',''))
+        #4 to bridge metrics to export CSV
         print(lang.getStrings(7).replace('\n',''))
         #0 to return to menu
         mode = raw_input('>>> ')
@@ -105,5 +111,9 @@ def menu_bridgeinfo(cookie):
             show_bridges()
         elif mode == '2': #Download bridge's information
             dl_bridgeinfo()
+        elif mode == '3': #Download bridge's information
+            gm.show_metrics(gcookie)
+        elif mode == '4': #Download bridge's information
+            gm.dl_bridgemetric(gcookie)
         elif mode == '0': #Return to menu
             break

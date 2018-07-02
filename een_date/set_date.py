@@ -75,3 +75,15 @@ def eTd2ETs(ETd):
         return(ET_UTCs)
     except:
         return None
+
+def string2DateTime(string):
+    '''
+    Given end time to be substracted 9 hours.
+    :param datetime ETd: Given time.
+    :return datetime ET_UTCs: 9 hours substracted end time.
+    :return none: The substraction failed.
+    '''
+    
+    d = datetime.datetime.strptime(string, '%Y%m%d%H%M%S.000')
+    d = d + datetime.timedelta(hours = 9)
+    return(d)

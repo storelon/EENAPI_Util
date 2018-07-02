@@ -6,3 +6,5 @@ Unknown bridge.
 1 to show bridge list
 2 to download bridge's information
 0 to return to menu
+3 to display bridge metrics
+4 to bridge metrics to export CSV

@@ -79,4 +79,14 @@ def devicelistcsvo():
     '''
     Send device list to the CSV maker.
     '''
-    xd.makecsv(get_devicelist())
+    strings = [u'type,name,ESN,IP\r\n']
+
+    def nonid(camid): #If the camera ID is None, replace inside of camid to a empty string.
+        if camid == None:
+            camid = u''
+        return camid
+
+    #Appending lines to the list with loops.
+    [strings.append(i[3] + u',' + i[2] + u',' + nonid(i[1]) + u',' +
+                   i[14].replace(',',';') + u'\r\n') for i in get_devicelist().json()]
+    xd.makecsv(strings, 'devicelist')
