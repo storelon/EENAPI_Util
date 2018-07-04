@@ -9,7 +9,7 @@ sys.path.append(os.getcwd())
 
 from een_localize import language
 
-def fileout(givenlist, filename):
+def fileout(givenjson, filename):
     '''
     Make a file from given argument.
     Let line feed code adapt to Windows.
@@ -19,16 +19,15 @@ def fileout(givenlist, filename):
     lang = language.Language('een_filer/export')
     dirname = 'output'
     dirname = od.createdir(dirname) #Prepare for failure of making directory
-    
     try: #Trying to write a file.
         with codecs.open(dirname + '/' + filename + '.txt', 'w', 'utf_8') as f:
-            json.dump(givenlist.json(), f, ensure_ascii=False, encoding='utf8', indent=4, )
+            json.dump(givenjson.json(), f, ensure_ascii=False, encoding='utf8', indent=4, )
 
         with open(dirname + '/' + filename + '.txt', 'r', ) as f:
             Allf = f.read()
 
         Allf.replace('\n', '\r\n')
-    
+
         with open(dirname + '/' + filename + '.txt', 'w') as f:
             f.write(Allf)
 
@@ -37,9 +36,8 @@ def fileout(givenlist, filename):
     except IOError:
         print(lang.getStrings(1).replace('\n',''))
         #File output error!!!
-    except:
+    except Exception as e:
         print(lang.getStrings(2).replace('\n',''))
-
         #Unknown error!!!
 
 def makecsv(listing, filename): # will be for generic use (3 param for filename,header,list)
@@ -51,7 +49,6 @@ def makecsv(listing, filename): # will be for generic use (3 param for filename,
 
     dirname = 'output'
     dirname = od.createdir(dirname) #Prepare for failure of making directory
-
     try: #Trying to write a file.
         with codecs.open(dirname + '/' + filename + '.csv', 'w', 'utf_8') as f:
             f.writelines(listing)
@@ -62,6 +59,4 @@ def makecsv(listing, filename): # will be for generic use (3 param for filename,
         #File output error!!!
     except:
         print(lang.getStrings(2).replace('\n',''))
-        import traceback
-        traceback.print_exc()
         #Unknown error!!!

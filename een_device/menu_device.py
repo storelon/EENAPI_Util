@@ -2,63 +2,51 @@ import json
 import requests
 import sys, os
 
+import get_bridge as gb
+import get_metric as gm
+import get_devicelist as gd
+
 sys.path.append(os.getcwd())
 
 from een_filer import export as xd
 from een_localize import language
-
-cookie = ''
-
-def devicelist(gcookie):
-    '''
-    Menu of device list.
-    :param string gcookie: current session's cookie.
-    '''
-    lang = language.Language('een_device/get_devicelist')
-    global cookie
-    cookie = gcookie
-    while True:
-
-
 
 def menu_bridgeinfo(cookie):
     '''
     Display this package's menu.
     :param string cookie: Current session's cookie.
     '''
-    lang = language.Language('een_device/get_bridge')
-    global gcookie
-    gcookie = cookie
+    lang = language.Language('een_device/menu_device')
     while True:
-        print(lang.getStrings(5).replace('\n',''))
-        #1 to show bridge list
-        print(lang.getStrings(6).replace('\n',''))
-        #2 to download bridge's information
-        print('3 to display bridge metrics')
-        print('4 to bridge metrics to export CSV')
-        print(lang.getStrings(7).replace('\n',''))
-        #0 to return to menu
+        print(lang.getStrings(0).replace('\n',''))
+        #1 to display your bridge list (include version information)
         print(lang.getStrings(1).replace('\n',''))
-        #1 to output raw JSON
+        #2 to download detailed information of the specified bridge
         print(lang.getStrings(2).replace('\n',''))
-        #2 to export CSV
+        #3 to download informations of your devices as a raw JSON file
         print(lang.getStrings(3).replace('\n',''))
+        #4 to download and export your device list as a CSV file
+        print(lang.getStrings(4).replace('\n',''))
+        #5 to display your bridge metrics
+        print(lang.getStrings(5).replace('\n',''))
+        #6 to download and export your bridge metrics as a CSV file
+        print(lang.getStrings(6).replace('\n',''))
         #0 to return to menu
         mode = raw_input('>>> ')
         if mode == '1': #Show bridge list
-            show_bridges()
+            gb.show_bridges(cookie)
         elif mode == '2': #Download bridge's information
-            dl_bridgeinfo()
-        elif mode == '3': #Download bridge's information
-            gm.show_metrics(gcookie)
-        elif mode == '4': #Download bridge's information
-            gm.dl_bridgemetric(gcookie)
+            gb.dl_bridgeinfo(cookie)
+        elif mode == '3': #Output Raw JSON of a camera's informtaion.
+            gd.devicelisto(cookie)
+        elif mode == '4': #Export CSV of current user's device list.
+            gd.devicelistcsvo(cookie)
+        elif mode == '5': #Download bridge's information
+            gm.show_metrics(cookie)
+        elif mode == '6': #Download bridge's information
+            gm.dl_bridgemetric(cookie)
 
-        mode = raw_input('>>> ')
-        if mode == '1': #Output Raw JSON of a camera's informtaion.
-            devicelisto()
-        elif mode == '2': #Export CSV of current user's device list.
-            devicelistcsvo()
-        else:
+
+        elif mode == '0':
             break
 

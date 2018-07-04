@@ -40,29 +40,23 @@ def show_metrics(cookie):
 
     def metrics(bridge):
         a = get_bridgemetric(bridge).json()['core']
-        return('Checked date:' +
+        return('Checked date: ' +
                a[-1][0] +
-               '\r\ntotal disk space:' +
-               str(a[-1][1]) +
-               'KibiBytes\r\nfree disk space(average):' +
+               '\r\ntotal disk space: ' + str(a[-1][1]) +
+               'KibiBytes\r\nfree disk space(average): ' +
                str(a[-1][2]) +
-               'KibiBytes\r\nused disk space(average):' +
-               str(a[-1][1] - a[-1][2]) +
-               'KibiBytes\r\n' +
-               str(a[-1][3]) +
-               'Bytes stored, ' +
-               str(a[-1][4]) +
-               'Bytes shaped, ' +
-               str(a[-1][5]) +
-               'Bytes streamed, ' +
-               str(a[-1][6]) +
-               'Bytes freed')
+               'KibiBytes\r\nused disk space(average): ' +
+               str(a[-1][1] - a[-1][2]) + 'KibiBytes\r\n' +
+               str(a[-1][3]) + 'Bytes stored, \r\n' +
+               str(a[-1][4]) + 'Bytes shaped, \r\n' +
+               str(a[-1][5]) + 'Bytes streamed, \r\n' +
+               str(a[-1][6]) + 'Bytes freed')
 
     [printer(i[2] +
              u' (ID: ' +
              i[1] +
              u' ) : metric:\r\n' +
-             metrics(i[1])) for i in gb.make_bridgelist().json() if metrics(i[1]) != None] #[8][8]
+             metrics(i[1])) for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8]
 
 def dl_bridgemetric(cookie):
     lang = language.Language('een_device/get_metric')
@@ -77,14 +71,10 @@ def dl_bridgemetric(cookie):
             a = get_bridgemetric(bridge).json()['core']
             return(sd.string2DateTime(a[-1][0]).strftime('%Y/%m/%d %H:%M:%S') +
                    ',' +
-                   str(a[-1][1] / (1024**2)) +
-                   ',' +
-                   str(a[-1][2] / (1024**2)) +
-                   ',' +
-                   str((a[-1][1] - a[-1][2]) / (1024**2)) +
-                   ',' +
-                   str(a[-1][5] / (1024**2)) +
-                   ',' +
+                   str(a[-1][1] / (1024**2)) + ',' +
+                   str(a[-1][2] / (1024**2)) + ',' +
+                   str((a[-1][1] - a[-1][2]) / (1024**2)) + ',' +
+                   str(a[-1][5] / (1024**2)) + ',' +
                    str(a[-1][4] / (1024**2)))
         except ValueError:
             return(u'N/A,,,')
@@ -106,29 +96,23 @@ def dl_bridgemetric(cookie):
     strings = [u'subaccount name,subaccount id,bridgename,bridgeID,' +
                'last check date,total disk space(GiB),average free disk space(GiB),' + 
                'average used disk space(GiB),MebiBytes streamed,MebiBytes shaped\r\n']
-    [strings.append('(Current account),,' +
-                    i[2] +
-                    u',' +
-                    i[1] +
-                    u',' +
-                    metrics(i[1]) +
-                    u'\r\n') for i in gb.make_bridgelist().json() if metrics(i[1]) != None] #[8][8]
 
+    #Current account's bridges.
+    [strings.append('(Current account),,' +
+                    i[2] + u',' + i[1] + u',' +
+                    metrics(i[1]) +
+                    u'\r\n') for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8] #401deru
+
+    #Subaccounts bridges.
     if accounts != None:
         def loop(j):
             print(lang.getStrings(3).replace('\n','') + j.encode('utf-8'))
             #Changing to subaccount: 
             sa.set_account(j,cookie)
             [strings.append(accounts[1][accounts[0].index(j)] +
-                            u',' +
-                            j +
-                            u',' +
-                            i[2] +
-                            u',' +
-                            i[1] +
-                            u',' +
+                            u',' + j + u',' + i[2] + u',' + i[1] + u',' +
                             metrics(i[1]) +
-                            u'\r\n') for i in gb.make_bridgelist().json() if metrics(i[1]) != None] #[8][8]
+                            u'\r\n') for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8]
             sa.reset_account(cookie)
         [loop(j) for j in accounts[0]]
     export.makecsv(strings, 'bridgemetrics')

@@ -1,0 +1,7 @@
+1 to display your bridge list (include version information)
+2 to download detailed information of the specified bridge
+3 to download informations of your devices as a raw JSON file
+4 to download and export your device list as a CSV file (include ESN)
+5 to display your bridge metrics (include storage information)
+6 to download and export your bridge metrics as a CSV file (include storage information)
+0 to return to menu

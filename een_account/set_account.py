@@ -45,7 +45,7 @@ def change_account(cookie):
     print(lang.getStrings(3).replace('\n',''))
     #Or type "0" to return to menu
     
-    account = raw_input('>>>') #Ask subaccount ID
+    account = raw_input('>>> ') #Ask subaccount ID
     if account == 0: #Returning to menu.
         print(lang.getStrings(4).replace('\n',''))
         #Return to menu.
