@@ -5,7 +5,7 @@ import os, sys
 sys.path.append(os.getcwd())
 
 from een_filer import operate_dir as od
-from een_filer import export as xd
+from een_filer import export
 from een_localize import language
 
 def get_accountlist(cookie):
@@ -37,5 +37,5 @@ def dl_accountlist(cookie):
     :param string cookie: Current session's cookie.
     '''
     accounts = get_accountlist(cookie)
-    xd.fileout(accounts, 'subaccountlist')
-    
+    filer = export.Filer()
+    filer.fileout(accounts, 'subaccountlist')

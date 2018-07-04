@@ -4,7 +4,7 @@ import sys, os
 
 sys.path.append(os.getcwd())
 
-from een_filer import export as xd
+from een_filer import export
 from een_localize import language
 
 cookie = ''
@@ -52,7 +52,8 @@ def devicelisto(gcookie):
     '''
     global cookie
     cookie = gcookie
-    xd.fileout(get_devicelist(), 'devicelist')
+    filer = export.Filer()
+    filer.fileout(get_devicelist(), 'devicelist')
 
 def devicelistcsvo(gcookie):
     '''
@@ -70,4 +71,5 @@ def devicelistcsvo(gcookie):
     #Appending lines to the list with loops.
     [strings.append(i[3] + u',' + i[2] + u',' + nonid(i[1]) + u',' +
                    i[14].replace(',',';') + u'\r\n') for i in get_devicelist().json()]
-    xd.makecsv(strings, 'devicelist')
+    filer = export.Filer()
+    filer.fileout(strings, 'devicelist')

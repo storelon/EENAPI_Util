@@ -44,7 +44,8 @@ def dl_bridgeinfo(cookie):
     bridgeinfo = get_bridge(bridge)
     print(bridgeinfo)
     if bridgeinfo.status_code == 200: #Completely got bridge information.
-        export.fileout(bridgeinfo, 'bridge_' + bridge)
+        filer = export.Filer()
+        filer.fileout(bridgeinfo, 'bridge_' + bridge)
     else:
         print(lang.getStrings(4).replace('\n',''))
         #Unknown bridge.

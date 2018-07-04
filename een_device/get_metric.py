@@ -115,4 +115,5 @@ def dl_bridgemetric(cookie):
                             u'\r\n') for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8]
             sa.reset_account(cookie)
         [loop(j) for j in accounts[0]]
-    export.makecsv(strings, 'bridgemetrics')
+    filer = export.Filer()
+    filer.fileout(strings, 'bridgemetrics')
