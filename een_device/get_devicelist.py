@@ -2,10 +2,14 @@ import json
 import requests
 import sys, os
 
+import get_bridge as gb
+
 sys.path.append(os.getcwd())
 
 from een_filer import export
 from een_localize import language
+from een_account import get_account as ga
+from een_account import set_account as sa
 
 cookie = ''
 
@@ -56,20 +60,60 @@ def devicelisto(gcookie):
     filer.fileout(get_devicelist(), 'devicelist')
 
 def devicelistcsvo(gcookie):
+    #This method need to be divided!!!
     '''
     Send device list to the CSV maker.
     '''
     global cookie
     cookie = gcookie
-    strings = [u'type,name,ESN,IP\r\n']
 
-    def nonid(camid): #If the camera ID is None, replace inside of camid to a empty string.
-        if camid == None:
-            camid = u''
-        return camid
+    keylist = [u'camera_property_model',u'bridge',u'camera_state_version',u'intf',
+               u'tagmap_status_state',u'camera_property_make',u'camera_retention_asset',u'camera_newest',u'camera_oldest',u'connect',
+               u'uuid',u'service',u'camera_retention_etag',u'make',u'ipaddr',u'ts',u'r_model',u'version',u'admin_password',u'esn',u'status',
+               u'admin_user',u'r_make',u'camera_property_version',u'r_version',u'mac',u'register_id',u'bridgeid',u'now',u'camera_property_analog',
+               u'class',u'status_hex',u'camera_retention_interval',u'camera_now',u'camera_abs_newest',u'camera_abs_oldest',u'camera_valid_ts',
+               u'model',u'camtype',u'proxy']
+    
+    strings = [u'account_name,account_id,type,name,' + ','.join(keylist) + '\r\n']
 
+    #Check Subaccounts.
+    accounts = ga.subaccountlist(cookie)
+
+    
     #Appending lines to the list with loops.
-    [strings.append(i[3] + u',' + i[2] + u',' + nonid(i[1]) + u',' +
-                   i[14].replace(',',';') + u'\r\n') for i in get_devicelist().json()]
+    def stringer(i, j):
+        try:
+            b = gb.get_device(i[1], cookie).json()['camera_info']
+        except:
+            b = {}
+            def appender(x):
+                b[u'brank' + str(x)] = ''
+            [appender(x) for x in range(40)]
+        k = ''
+
+        for c in keylist:
+            try:
+                k = k + ',' + str(b[c]).replace(',',';')
+            except:
+                k = k + ','
+        
+        strings.append(j +i[3] + u',' + i[2] + k + u'\r\n')
+
+    #Appending current acount's devices.
+    [stringer(i, '(Current account),,') for i in get_devicelist().json()]
+
+
+    #Subaccount's bridges.
+    def loop(j):
+        print(u'Changing to subaccount: ' + j.encode('utf-8'))
+        #Changing to subaccount: 
+        sa.set_account(j,cookie)
+        [stringer(i, accounts[1][accounts[0].index(j)] + u',' + j + u',') for i in get_devicelist().json()]
+        sa.reset_account(cookie)
+
+    
+    if accounts != None:
+        [loop(j) for j in accounts[0]]
+
     filer = export.Filer()
     filer.fileout(strings, 'devicelist')

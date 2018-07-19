@@ -39,3 +39,23 @@ def dl_accountlist(cookie):
     accounts = get_accountlist(cookie)
     filer = export.Filer()
     filer.fileout(accounts, 'subaccountlist')
+
+def subaccountlist(cookie):
+    '''
+    :param string cookie: Current session's cookie.
+    :param list accounts: Subaccount's list --->[account name, account id]
+    '''
+    print('Checking subaccounts.')
+    #Checking subaccounts.
+    response = get_accountlist(cookie)
+    if response.status_code == 200:
+        print('Subaccounts found.')
+        #Subaccounts found.
+        accounts = [[],[]]
+        [accounts[0].append(i[0]) for i in response.json()]
+        [accounts[1].append(i[1]) for i in response.json()]
+    else:
+        print ('No subaccounts was found.')
+        #No subaccounts was found.
+        accounts = None
+    return accounts

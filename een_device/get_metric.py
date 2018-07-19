@@ -79,20 +79,8 @@ def dl_bridgemetric(cookie):
         except ValueError:
             return(u'N/A,,,')
 
-    print(lang.getStrings(0).replace('\n',''))
-    #Checking subaccounts.
-    response = ga.get_accountlist(cookie)
-    if response.status_code == 200:
-        print(lang.getStrings(1).replace('\n',''))
-        #Subaccounts found.
-        accounts = [[],[]]
-        [accounts[0].append(i[0]) for i in response.json()]
-        [accounts[1].append(i[1]) for i in response.json()]
-    else:
-        print (lang.getStrings(2).replace('\n',''))
-        #No subaccounts was found.
-        accounts = None
-
+    accounts = ga.subaccountlist(gcookie)
+    
     strings = [u'subaccount name,subaccount id,bridgename,bridgeID,' +
                'last check date,total disk space(GiB),average free disk space(GiB),' + 
                'average used disk space(GiB),MebiBytes streamed,MebiBytes shaped\r\n']
@@ -103,17 +91,20 @@ def dl_bridgemetric(cookie):
                     metrics(i[1]) +
                     u'\r\n') for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8] #401deru
 
+
     #Subaccounts bridges.
+    def loop(j):
+        print(lang.getStrings(3).replace('\n','') + j.encode('utf-8'))
+        #Changing to subaccount: 
+        sa.set_account(j,cookie)
+        [strings.append(accounts[1][accounts[0].index(j)] +
+                        u',' + j + u',' + i[2] + u',' + i[1] + u',' +
+                        metrics(i[1]) +
+                        u'\r\n') for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8]
+        sa.reset_account(cookie)
+
+        
     if accounts != None:
-        def loop(j):
-            print(lang.getStrings(3).replace('\n','') + j.encode('utf-8'))
-            #Changing to subaccount: 
-            sa.set_account(j,cookie)
-            [strings.append(accounts[1][accounts[0].index(j)] +
-                            u',' + j + u',' + i[2] + u',' + i[1] + u',' +
-                            metrics(i[1]) +
-                            u'\r\n') for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8]
-            sa.reset_account(cookie)
         [loop(j) for j in accounts[0]]
     filer = export.Filer()
     filer.fileout(strings, 'bridgemetrics')

@@ -9,6 +9,8 @@ sys.path.append(os.getcwd())
 
 from een_filer import operate_dir as od
 from een_filer import export
+from een_account import get_account as ga
+from een_account import set_account as sa
 from een_localize import language
 
 gcookie = ''
@@ -20,6 +22,17 @@ def get_bridge(bridge):
     :return json response: Specified bridge's informations.
     '''
     response = requests.get('https://login.eagleeyenetworks.com/g/device', {'id':bridge}, cookies=gcookie)
+    return(response)
+
+def get_device(device, cookie):
+    '''
+    Get specified device's informations.
+    :param string device: device id.
+    :return json response: Specified device's informations.
+    '''
+    global gcookie
+    gcookie = cookie
+    response = requests.get('https://login.eagleeyenetworks.com/g/device', {'id':device}, cookies=gcookie)
     return(response)
 
 def make_bridgelist(cookie):
@@ -62,5 +75,3 @@ def show_bridges(cookie):
     
     [printer(i[2] + u' (ID: ' + i[1] + u' ) : version ' +
              get_bridge(i[1]).json()['camera_info']['camera_property_version'] ) for i in make_bridgelist(cookie).json()] #[8][8]
-
-
