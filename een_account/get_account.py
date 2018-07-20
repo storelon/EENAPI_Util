@@ -30,6 +30,7 @@ def accountlist(cookie):
         [printer(i[1] + ' (ID: ' + i[0] + ' )') for i in accounts.json()]
     elif accounts.status_code == 403:
         print(lang.getStrings(0).replace('\n',''))
+        #You have no subaccount because you are not a master account.
 
 def dl_accountlist(cookie):
     '''
@@ -45,17 +46,18 @@ def subaccountlist(cookie):
     :param string cookie: Current session's cookie.
     :param list accounts: Subaccount's list --->[account name, account id]
     '''
-    print('Checking subaccounts.')
+    lang = language.Language('een_account/get_account')
+    print(lang.getStrings(1).replace('\n',''))
     #Checking subaccounts.
     response = get_accountlist(cookie)
     if response.status_code == 200:
-        print('Subaccounts found.')
+        print(lang.getStrings(2).replace('\n',''))
         #Subaccounts found.
         accounts = [[],[]]
         [accounts[0].append(i[0]) for i in response.json()]
         [accounts[1].append(i[1]) for i in response.json()]
     else:
-        print ('No subaccounts was found.')
+        print (lang.getStrings(3).replace('\n',''))
         #No subaccounts was found.
         accounts = None
     return accounts
