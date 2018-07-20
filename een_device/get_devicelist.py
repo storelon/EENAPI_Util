@@ -42,6 +42,7 @@ def get_devicelist():
 def cameras(gcookie):
     '''
     Extract camera ID from JSON.
+    :param string gcookie: Current session's cookie.
     :return array camlist: Array of camera ID list.
     '''
     global cookie
@@ -53,6 +54,7 @@ def cameras(gcookie):
 def devicelisto(gcookie):
     '''
     Send device list to the file writer.
+    :param string gcookie: Current session's cookie.
     '''
     global cookie
     cookie = gcookie
@@ -60,9 +62,11 @@ def devicelisto(gcookie):
     filer.fileout(get_devicelist(), 'devicelist')
 
 def devicelistcsvo(gcookie):
-    #This method need to be divided!!!
     '''
+    Get and make device list and convert to CSV format.
+    And this method check to sub account's devices if current account has sub account.
     Send device list to the CSV maker.
+    :param string cookie: Current session's cookie.
     '''
     global cookie
     cookie = gcookie
@@ -89,7 +93,7 @@ def devicelistcsvo(gcookie):
     def subaccountdig(j):
         print(lang.getStrings(1).replace('\n','') + j.encode('utf-8'))
         #Changing to subaccount: 
-        sa.set_account(j,cookie)
+        sa.set_account(j, cookie)
         [strings.append(x) for x in [stringer(i, accounts[1][accounts[0].index(j)] + u',' + j + u',', keylist) for i in get_devicelist().json()]]
         sa.reset_account(cookie)
 
@@ -104,7 +108,10 @@ def devicelistcsvo(gcookie):
 
 def stringer(i, j, keylist):
     '''
-    Appending lines to the list with loops.
+    Make strings for Strings List for CSV
+    :param list i: List of device.
+    :param list j: Head of csv record. Keys of account name and account ID.
+    :param list keylist: Key list of device informations of CSV.
     '''
     try:
         b = gb.get_device(i[1], cookie).json()['camera_info']
