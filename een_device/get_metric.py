@@ -29,7 +29,8 @@ def get_bridgemetric(bridge):
 
 def show_metrics(cookie):
     '''
-    Display the bridge's metrics which the current account has.
+    Display bridges's metrics which the current account has.
+    :param string cookie: Current session's cookie.
     '''
     
     global gcookie
@@ -59,6 +60,11 @@ def show_metrics(cookie):
              metrics(i[1])) for i in gb.make_bridgelist(gcookie).json() if metrics(i[1]) != None] #[8][8]
 
 def dl_bridgemetric(cookie):
+    #This method will be joint into a common method.
+    '''
+    Download bridge's metrics and export to a CSV file.
+    :param string cookie: Current session's cookie.
+    '''
     lang = language.Language('een_device/get_metric')
     global gcookie
     gcookie = cookie

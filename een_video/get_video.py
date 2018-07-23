@@ -28,6 +28,14 @@ def make_url(videotimelist, camid) :
     return url
 
 def get_videotimelist(camid, STs , ETs, cookie) :
+    '''
+    Get and make specified camera's video exist time list.
+    :param string camid: Specified camera's ID
+    :param string STs: Start date time of period
+    :param string ETs: End date time of period
+    :param string cookie: Current session's cookie.
+    :return JSON response: A response of EEN API.
+    '''
     lang = language.Language('een_video/get_video')
     query = 'https://login.eagleeyenetworks.com/asset/list/video?start_timestamp=' + STs + '.000;end_timestamp=' + ETs + '.000;id=' + camid + ';options=coalesce'
     response = requests.get(query, cookies=cookie)
@@ -41,6 +49,14 @@ def get_videotimelist(camid, STs , ETs, cookie) :
         print(camid.encode('utf-8') + lang.getStrings(2).replace('\n',''))
 
 def video_download(camid, STd, ETd, cookie):
+    '''
+    Download all videos in specified camera in specified period.
+    Using multi threading.
+    :param string camid: Specified camera's ID
+    :param string STs: Start date time of specified period.
+    :param string ETs: End date time of specified period.
+    :param string cookie: Current session's cookie.
+    '''
     lang = language.Language('een_video/get_video')
     try:
         videotimelist = get_videotimelist(camid, STd, ETd, cookie)
@@ -54,34 +70,50 @@ def video_download(camid, STd, ETd, cookie):
         return 0
 
     def divide(listing, n):
+        '''
+        Divide video URL list into given number.
+        This method for multi thread downloading.
+        :param list listing: Video URL list.
+        :param integer n: Divisor.
+        '''
         spurl = [[]]
         [spurl.append([]) for x in range(n - 1)]
         counter = Counter()
 
         def incri(i):
-            spurl[i].append(listing[counter.getter()])
-            counter.incrementer()
+            '''
+            :param integer i: Array's number.
+            '''
+            try:
+                spurl[i].append(listing[counter.getter()])
+                print listing[counter.getter()]
+                counter.incrementer()
+            except:
+                pass
         
         num = len(listing)/n
-        num + len(listing)%n
+        if len(listing)%n > 0:
+            num += 1
+        
         [[incri(i) for i in range(n) ] for j in range(num)]
         return spurl
-        
+
+    #Number of threads.
     thread_num = 4
 
     url = make_url(videotimelist, camid)
     dlinfo = [dirname, camid, videotimelist, url, cookie]
-    
+
     spurl = divide(url, thread_num)
 
-    threads = []        
-
+    #Multi threading
+    threads = []
     [threads.append(MyThread("Thread-{}".format(spurl.index(iurl)), iurl, dlinfo)) for iurl in spurl]
-    
     for th in threads:
         th.start()
         sleep(1)
     [th.join() for th in threads]
+    
     print(camid.encode('utf-8') + lang.getStrings(7).replace('\n',''))
 
     

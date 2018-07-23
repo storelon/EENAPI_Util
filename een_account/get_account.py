@@ -11,6 +11,7 @@ from een_localize import language
 def get_accountlist(cookie):
     '''
     Get subaccount list method.
+    :param string cookie: Current session's cookie.
     :return json: response of subaccount list
     '''
     response = requests.get('https://login.eagleeyenetworks.com/g/account/list', cookies=cookie)
@@ -34,7 +35,7 @@ def accountlist(cookie):
 
 def dl_accountlist(cookie):
     '''
-    Download and write sub account list method.
+    Sub account list download and write method.
     :param string cookie: Current session's cookie.
     '''
     accounts = get_accountlist(cookie)
@@ -43,6 +44,7 @@ def dl_accountlist(cookie):
 
 def subaccountlist(cookie):
     '''
+    Make a current user's sub account list and return the sub account list.
     :param string cookie: Current session's cookie.
     :param list accounts: Subaccount's list --->[account name, account id]
     '''

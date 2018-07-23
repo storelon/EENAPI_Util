@@ -13,7 +13,7 @@ from een_localize import language
 
 class Auth:
     '''
-    Authorize an Eagle Eye Networks user class.
+    Eagle Eye Networks user authorize class.
     Ask user to input username and password.
     If authentication succeed, then store a cookie and its auth key.
     Return cookie when asked auth key per every connection.

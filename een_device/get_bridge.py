@@ -28,6 +28,7 @@ def get_device(device, cookie):
     '''
     Get specified device's informations.
     :param string device: device id.
+    :param string cookie: Current session's cookie.
     :return json response: Specified device's informations.
     '''
     global gcookie
@@ -38,6 +39,7 @@ def get_device(device, cookie):
 def make_bridgelist(cookie):
     '''
     Get bridge list.
+    :param string cookie: Current session's cookie.
     :return json response: Raw bridge list.
     '''
     response = requests.get('https://login.eagleeyenetworks.com/g/device/list?t=bridge', cookies=cookie)
@@ -46,7 +48,8 @@ def make_bridgelist(cookie):
 
 def dl_bridgeinfo(cookie):
     '''
-    Get bridge information and write it a file.
+    Get bridge information and write it to a file.
+    :param string cookie: Current session's cookie.
     '''
     global gcookie
     gcookie = cookie
@@ -66,6 +69,7 @@ def dl_bridgeinfo(cookie):
 def show_bridges(cookie):
     '''
     Get list of bridges witch current account has and the bridges version.
+    :param string cookie: Current session's cookie.
     '''
     global gcookie
     gcookie = cookie

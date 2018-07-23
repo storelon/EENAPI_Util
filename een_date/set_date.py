@@ -24,6 +24,7 @@ def datecheck(date_str) :
         #Date format error!
         return None
 
+#inputST() and inputET() will be jointed.
 def inputST():
     '''
     Accept input of beginning time of the period.
@@ -44,9 +45,10 @@ def inputET():
     return(eTd2ETs(datecheck(raw_input(lang.getStrings(2).replace('\n','')))))
     #end time (YYYY/MM/DD HH:MM:SS) >>>
 
+#sTd2STs() and eTd2ETs will be jointed.
 def sTd2STs(STd):
     '''
-    Given start time to be substracted 9 hours.
+    Given start time to be substracted 9 hours and convert to a string.
     :param datetime STd: Given time.
     :return datetime ST_UTCs: 9 hours substracted start time.
     :return none: The substraction failed.
@@ -62,9 +64,9 @@ def sTd2STs(STd):
 
 def eTd2ETs(ETd):
     '''
-    Given end time to be substracted 9 hours.
+    Given end time to be substracted 9 hours and convert to a string.
     :param datetime ETd: Given time.
-    :return datetime ET_UTCs: 9 hours substracted end time.
+    :return datetime ET_UTCs: 9 hours subtracted end time.
     :return none: The substraction failed.
     '''
     
@@ -78,10 +80,9 @@ def eTd2ETs(ETd):
 
 def string2DateTime(string):
     '''
-    Given end time to be substracted 9 hours.
-    :param datetime ETd: Given time.
-    :return datetime ET_UTCs: 9 hours substracted end time.
-    :return none: The substraction failed.
+    Given strings to be added 9 hours and convert to datetime format.
+    :param string string: Given string of time.
+    :return datetime: 9 hours added time.
     '''
     
     d = datetime.datetime.strptime(string, '%Y%m%d%H%M%S.000')
