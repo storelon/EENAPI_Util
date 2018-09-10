@@ -81,7 +81,7 @@ def devicelistcsvo(gcookie):
                u'model',u'camtype',u'proxy']
 
     #Prepare list of lines which will be wrote.
-    strings = [u'account_name,account_id,type,name,' + ','.join(keylist) + '\r\n']
+    strings = [u'account_name,account_id,type,name,' + ','.join(keylist) + ',Number of Attached cameras']
 
     #Check Subaccounts.
     accounts = ga.subaccountlist(cookie)
@@ -102,6 +102,8 @@ def devicelistcsvo(gcookie):
     if accounts != None:
         [subaccountdig(j) for j in accounts[0]]
 
+    strings = number_of_cameras(strings)
+
     #Export to a file.
     filer = export.Filer()
     filer.fileout(strings, 'devicelist')
@@ -112,7 +114,7 @@ def stringer(i, j, keylist):
     Make strings for Strings List for CSV
     :param list i: A list of devices.
     :param list j: Head of the csv records. Keys of the account name and the account ID.
-    :param list keylist: A key list of the device informations of the CSV.
+    :param list keylist: A key list of the device informations for the CSV.
     :return string: strings of a record for the CSV
     '''
     try:
@@ -129,4 +131,30 @@ def stringer(i, j, keylist):
         except:
             k = k + ','
     
-    return(j + i[3] + u',' + i[2] + k + u'\r\n')
+    return(j + i[3].replace(',',';') + u',' + i[2].replace(',',';') + k)
+
+def number_of_cameras(strings):
+    '''
+    Compute number of cameras from the CSV strings.
+    :param list strings: A list of strings to be wrote in the CSV file.
+    :return strings2: strings of a record for the CSV
+    '''
+    def checknum(bridgeid, accountid):
+        num = 0
+        for line in strings:
+            list_line = line.split(',')
+            if list_line[5] == bridgeid and list_line[1] == accountid and list_line[5] != '':
+                num += 1
+        return(num)
+    
+    strings2 = []
+    
+    for line in strings:
+        if ',bridge,' in line and strings.index(line) > 0:
+            list_line = line.split(',')
+            num = checknum(list_line[14], list_line[1])
+            strings2.append(strings[strings.index(line)] + ',' + str(num) + u'\r\n')
+        else:
+            strings2.append(strings[strings.index(line)] + ',' + u'\r\n')
+
+    return(strings2)

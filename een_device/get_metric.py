@@ -74,14 +74,39 @@ def dl_bridgemetric(cookie):
 
     def metrics(bridge):
         try:
-            a = get_bridgemetric(bridge).json()['core']
-            return(sd.string2DateTime(a[-1][0]).strftime('%Y/%m/%d %H:%M:%S') +
-                   ',' +
-                   str(a[-1][1] / (1024**2)) + ',' +
-                   str(a[-1][2] / (1024**2)) + ',' +
-                   str((a[-1][1] - a[-1][2]) / (1024**2)) + ',' +
-                   str(a[-1][5] / (1024**2)) + ',' +
-                   str(a[-1][4] / (1024**2)))
+            m = get_bridgemetric(bridge).json()
+            bri_info = gb.get_device(bridge, gcookie).json()['camera_info']
+            a = m['core']
+            b = m['bandwidth']
+            sumb = 0
+            length = 0
+            aveb = 0
+            for bi in b:
+                sumb += bi[1]
+                length += 1
+            if length != 0:
+                aveb = sumb / length
+            try:
+                r = (sd.string2DateTime(a[-1][0]).strftime('%Y/%m/%d %H:%M:%S') +
+                     ',' +
+                     str(a[-1][1] / (1024**2)) + ',' +
+                     str(a[-1][2] / (1024**2)) + ',' +
+                     str((a[-1][1] - a[-1][2]) / (1024**2)) + ',' +
+                     str(a[-1][5] / (1024**2)) + ',' +
+                     str(a[-1][4] / (1024**2)) + ',' +
+                     str(aveb * 8 / (1024**2)) + ',' +
+                     bri_info[u'version'] + ',')
+            except:
+                r = (sd.string2DateTime(a[-1][0]).strftime('%Y/%m/%d %H:%M:%S') +
+                     ',' +
+                     str(a[-1][1] / (1024**2)) + ',' +
+                     str(a[-1][2] / (1024**2)) + ',' +
+                     str((a[-1][1] - a[-1][2]) / (1024**2)) + ',' +
+                     str(a[-1][5] / (1024**2)) + ',' +
+                     str(a[-1][4] / (1024**2)) + ',' +
+                     str(aveb * 8 / (1024**2)) + ',' +
+                     '' + ',')
+            return(r)
         except ValueError:
             return(u'N/A,,,')
 
@@ -89,7 +114,7 @@ def dl_bridgemetric(cookie):
     
     strings = [u'subaccount name,subaccount id,bridgename,bridgeID,' +
                'last check date,total disk space(GiB),average free disk space(GiB),' + 
-               'average used disk space(GiB),MebiBytes streamed,MebiBytes shaped\r\n']
+               'average used disk space(GiB),MebiBytes streamed,MebiBytes shaped,Cloud BM Measured(Mbps),Firmware Version\r\n']
 
     #Current account's bridges.
     [strings.append('(Current account),,' +

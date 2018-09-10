@@ -14,9 +14,10 @@ from een_localize import language
 
 def make_url(videotimelist, camid) :
     '''
-    Make download URL.
+    Make download URL from given video time list.
     :param json videotimelist: The video's start time and end time.
-    ::
+    :param string camid: The specified camera's ID.
+    :return string url: The download URL.
     '''
     url = []
     [url.append('https://login.eagleeyenetworks.com/asset/play/video.flv?id=' +
@@ -29,12 +30,12 @@ def make_url(videotimelist, camid) :
 
 def get_videotimelist(camid, STs , ETs, cookie) :
     '''
-    Get and make specified camera's video exist time list.
-    :param string camid: Specified camera's ID
-    :param string STs: Start date time of period
-    :param string ETs: End date time of period
+    Get and make a list of time that the specified camera's video in the specified period exists.
+    :param string camid: The specified camera's ID.
+    :param string STs: Start date time of the period.
+    :param string ETs: End date time of the period.
     :param string cookie: Current session's cookie.
-    :return JSON response: A response of EEN API.
+    :return JSON response: A response of EEN API include the video's start time and end time lists.
     '''
     lang = language.Language('een_video/get_video')
     query = 'https://login.eagleeyenetworks.com/asset/list/video?start_timestamp=' + STs + '.000;end_timestamp=' + ETs + '.000;id=' + camid + ';options=coalesce'
@@ -50,8 +51,8 @@ def get_videotimelist(camid, STs , ETs, cookie) :
 
 def video_download(camid, STd, ETd, cookie):
     '''
-    Download all videos in specified camera in specified period.
-    Using multi threading.
+    Download all videos in the specified camera in the specified period,
+    With multi threading.
     :param string camid: Specified camera's ID
     :param string STs: Start date time of specified period.
     :param string ETs: End date time of specified period.
@@ -69,42 +70,14 @@ def video_download(camid, STd, ETd, cookie):
         print(lang.getStrings(8).replace('\n',''))
         return 0
 
-    def divide(listing, n):
-        '''
-        Divide video URL list into given number.
-        This method for multi thread downloading.
-        :param list listing: Video URL list.
-        :param integer n: Divisor.
-        '''
-        spurl = [[]]
-        [spurl.append([]) for x in range(n - 1)]
-        counter = Counter()
-
-        def incri(i):
-            '''
-            :param integer i: Array's number.
-            '''
-            try:
-                spurl[i].append(listing[counter.getter()])
-                print listing[counter.getter()]
-                counter.incrementer()
-            except:
-                pass
-        
-        num = len(listing)/n
-        if len(listing)%n > 0:
-            num += 1
-        
-        [[incri(i) for i in range(n) ] for j in range(num)]
-        return spurl
-
     #Number of threads.
     thread_num = 4
 
     url = make_url(videotimelist, camid)
     dlinfo = [dirname, camid, videotimelist, url, cookie]
 
-    spurl = divide(url, thread_num)
+
+    spurl = divideurl(url, thread_num)
 
     #Multi threading
     threads = []
@@ -116,8 +89,43 @@ def video_download(camid, STd, ETd, cookie):
     
     print(camid.encode('utf-8') + lang.getStrings(7).replace('\n',''))
 
+def divideurl(listing, n):
+    '''
+    Divide the given video URL list into the given number.
+    This method is for multi thread downloading.
+    :param list listing: Video URL list.
+    :param integer n: Divisor.
+    :return string spurl: Divided list such as [[url1,url4][url2,url5][url3,url6]].
+    '''
+    spurl = [[]]
+    [spurl.append([]) for x in range(n - 1)]
+    counter = Counter()
+
+    def incri(i):
+        '''
+        :param integer i: Array's number.
+        '''
+        try:
+            spurl[i].append(listing[counter.getter()])
+            print listing[counter.getter()]
+            counter.incrementer()
+        except:
+            pass
+    
+    num = len(listing)/n
+    if len(listing)%n > 0:
+        num += 1
+    
+    [[incri(i) for i in range(n) ] for j in range(num)]
+    return spurl
     
 class MyThread(threading.Thread):
+    '''
+    __init__: Initialize member variables.
+    run: Set file name and run filedl method.
+    filedl: Access the specified url and get a video file. The got file let to send to a member variable.
+    fileout: A member
+    '''
     def __init__(self, name, url, dlinfo):
         threading.Thread.__init__(self)
         self.dlinfo = dlinfo
